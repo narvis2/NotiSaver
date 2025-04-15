@@ -12,12 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gramihotel.notisaver.ui.theme.NotiSaverTheme
+import com.gramihotel.notisaver.view.utils.SettingsHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        SettingsHelper.openNotificationListenerSettings(this)
+
         enableEdgeToEdge()
         setContent {
             NotiSaverTheme {
