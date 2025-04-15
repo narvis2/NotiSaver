@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -40,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -59,6 +62,33 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // Coroutine
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.dagger.hilt.compiler)
+    implementation(libs.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.hilt.navigation)
+    implementation(libs.hilt.navigation.fragment)
+    // WorkManager
+    implementation(libs.work)
+    // Compose Navigation
+    implementation(libs.compose.navigation)
+    // Jackson
+    implementation(libs.jackson)
+    // Gson
+    implementation(libs.gson)
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.jackson)
+    implementation(libs.retrofit.scalars)
+    // OkHttp
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+    implementation(libs.okhttp.brotli)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,4 +96,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    hilt { enableAggregatingTask = true }
 }
