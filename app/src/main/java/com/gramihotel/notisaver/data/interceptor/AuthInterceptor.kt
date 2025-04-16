@@ -55,7 +55,7 @@ class AuthInterceptor : Interceptor {
         val requestBody = jsonBody.toRequestBody(jsonMediaType)
 
         val request = Request.Builder()
-            .url("${BASE_URL}/sign/sign-in")
+            .url("${BASE_URL}sign/sign-in")
             .addHeader("Content-Type", "application/json; charset=utf-8")
             .post(requestBody)
             .build()

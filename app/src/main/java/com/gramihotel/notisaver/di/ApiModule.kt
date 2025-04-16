@@ -24,17 +24,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiModule {
+class ApiModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideNotiAuthApiService(
         retrofit: Retrofit
     ): NotiAuthApiService = retrofit.create(NotiAuthApiService::class.java)
 
     @Singleton
     @Provides
-    fun provideNonAuthRetrofit(
+    fun provideAuthRetrofit(
         client: OkHttpClient,
         jackson: JacksonConverterFactory,
         enum: Converter.Factory

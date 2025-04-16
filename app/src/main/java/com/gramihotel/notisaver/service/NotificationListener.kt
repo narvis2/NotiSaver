@@ -14,6 +14,7 @@ import androidx.work.workDataOf
 import com.gramihotel.notisaver.data.model.noti.NotiPlatformType
 import com.gramihotel.notisaver.work.NotiWorker
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class NotificationListener : NotificationListenerService() {
@@ -22,6 +23,11 @@ class NotificationListener : NotificationListenerService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         return START_STICKY
+    }
+
+    override fun onCreate() {
+        Timber.e("📌 NotificationListener Start")
+        super.onCreate()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -60,6 +66,7 @@ class NotificationListener : NotificationListenerService() {
                     "text" to text,
                 )
 
+                Timber.e("📌 data 👉 $data")
                 val work = OneTimeWorkRequestBuilder<NotiWorker>().setInputData(data).build()
                 WorkManager.getInstance(applicationContext).enqueue(work)
             }
