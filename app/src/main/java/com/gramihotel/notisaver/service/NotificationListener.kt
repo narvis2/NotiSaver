@@ -1,14 +1,20 @@
 package com.gramihotel.notisaver.service
 
+import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.gramihotel.notisaver.data.model.noti.NotiPlatformType
+import com.gramihotel.notisaver.work.NotiWorker
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class NotificationListener : NotificationListenerService() {
@@ -19,8 +25,52 @@ class NotificationListener : NotificationListenerService() {
         return START_STICKY
     }
 
+    override fun onCreate() {
+        Timber.e("📌 NotificationListener Start")
+        super.onCreate()
+    }
+
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
+
+        sbn?.let {
+            if (it.packageName in packageNames) {
+                val notiKey = it.key
+                val notiTime = it.postTime
+                val extras = it.notification.extras ?: return
+                val title = extras.getString(Notification.EXTRA_TITLE)
+                val text = extras.getString(Notification.EXTRA_TEXT)
+
+                if (title.isNullOrBlank() || text.isNullOrBlank()) return
+
+                val type = when (it.packageName) {
+                    "com.goodchoice.abouthereowner" -> NotiPlatformType.YEOGI.name
+                    "com.yanolja.partnercenter.app" -> {
+                        if (title.contains("그라미호텔")) {
+                            NotiPlatformType.YANOLJA_HOTEL.name
+                        } else {
+                            NotiPlatformType.YANOLJA_MOTEL.name
+                        }
+                    }
+
+                    "com.naver.smartplace" -> NotiPlatformType.NAVER.name
+
+                    else -> return
+                }
+
+                val data = workDataOf(
+                    "key" to notiKey,
+                    "notiPlatformType" to type,
+                    "postTime" to notiTime,
+                    "title" to title,
+                    "text" to text,
+                )
+
+                Timber.e("📌 data 👉 $data")
+                val work = OneTimeWorkRequestBuilder<NotiWorker>().setInputData(data).build()
+                WorkManager.getInstance(applicationContext).enqueue(work)
+            }
+        }
     }
 
     override fun onListenerDisconnected() {
@@ -67,5 +117,11 @@ class NotificationListener : NotificationListenerService() {
                 )
             }
         }
+
+        private val packageNames = listOf(
+            "com.goodchoice.abouthereowner",
+            "com.yanolja.partnercenter.app",
+            "com.naver.smartplace"
+        )
     }
 }
