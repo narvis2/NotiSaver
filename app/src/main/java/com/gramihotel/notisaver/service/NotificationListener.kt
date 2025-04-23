@@ -44,16 +44,33 @@ class NotificationListener : NotificationListenerService() {
                 if (title.isNullOrBlank() || text.isNullOrBlank()) return
 
                 val type = when (it.packageName) {
-                    "com.goodchoice.abouthereowner" -> NotiPlatformType.YEOGI.name
-                    "com.yanolja.partnercenter.app" -> {
-                        if (title.contains("그라미호텔")) {
-                            NotiPlatformType.YANOLJA_HOTEL.name
+                    "com.kakao.talk" -> {
+                        if (title.contains("여기어때") && (text.contains("숙박") || text.contains("숙박취소"))) {
+                            NotiPlatformType.YEOGI.name
                         } else {
-                            NotiPlatformType.YANOLJA_MOTEL.name
+                            return
                         }
                     }
 
-                    "com.naver.smartplace" -> NotiPlatformType.NAVER.name
+                    "com.yanolja.partnercenter.app" -> {
+                        if (title.contains("신규예약") || title.contains("예약취소")) {
+                            if (title.contains("그라미호텔")) {
+                                NotiPlatformType.YANOLJA_HOTEL.name
+                            } else {
+                                NotiPlatformType.YANOLJA_MOTEL.name
+                            }
+                        } else {
+                            return
+                        }
+                    }
+
+                    "com.naver.smartplace" -> {
+                        if (title.contains("예약확정") || title.contains("예약취소")) {
+                            NotiPlatformType.NAVER.name
+                        } else {
+                            return
+                        }
+                    }
 
                     else -> return
                 }
@@ -118,10 +135,15 @@ class NotificationListener : NotificationListenerService() {
             }
         }
 
+        /**
+         * com.goodchoice.abouthereowner
+         * 여기어때의 Noti 가 불규칙하게 와서 여기어때 Noti 에 의존하지 않고
+         * kakaoTalk Noti 에 의존하여 처리되도록 수정
+         */
         private val packageNames = listOf(
-            "com.goodchoice.abouthereowner",
+            "com.kakao.talk",
             "com.yanolja.partnercenter.app",
-            "com.naver.smartplace"
+            "com.naver.smartplace",
         )
     }
 }
