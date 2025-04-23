@@ -53,7 +53,7 @@ class NotificationListener : NotificationListenerService() {
                     }
 
                     "com.yanolja.partnercenter.app" -> {
-                        if (title.contains("신규예약") || title.contains("예약취소")) {
+                        if (text.contains("신규예약") || text.contains("예약취소")) {
                             if (title.contains("그라미호텔")) {
                                 NotiPlatformType.YANOLJA_HOTEL.name
                             } else {
